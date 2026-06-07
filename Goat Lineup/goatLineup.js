@@ -20,6 +20,7 @@ const positions = [
 
 let selectedPlayers = {}; // { PG: playerObj, ... }
 let currentTiles = {};    // { PG: playerObj, ... }
+let shownPlayers = {};    // { PG: Set of names already displayed, ... }
 
 function getRandomPlayerForPosition(posKey, excludeNames = []) {
     let pool;
@@ -41,9 +42,19 @@ function getRandomPlayerForPosition(posKey, excludeNames = []) {
 function randomizeTiles() {
     positions.forEach(pos => {
         if (!selectedPlayers[pos.key]) {
-            // Exclude already selected players for other positions
-            const exclude = Object.values(selectedPlayers).map(p => p.name);
-            currentTiles[pos.key] = getRandomPlayerForPosition(pos.key, exclude);
+            if (!shownPlayers[pos.key]) shownPlayers[pos.key] = new Set();
+            const selectedNames = Object.values(selectedPlayers).filter(p => p).map(p => p.name);
+            let exclude = [...selectedNames, ...Array.from(shownPlayers[pos.key])];
+            let player = getRandomPlayerForPosition(pos.key, exclude);
+            // All available players for this position have been shown — reset and cycle
+            if (!player) {
+                shownPlayers[pos.key] = new Set();
+                player = getRandomPlayerForPosition(pos.key, selectedNames);
+            }
+            if (player) {
+                currentTiles[pos.key] = player;
+                shownPlayers[pos.key].add(player.name);
+            }
         }
     });
     renderTiles();
@@ -136,6 +147,7 @@ function checkGoal() {
 function restartGame() {
     selectedPlayers = {};
     currentTiles = {};
+    shownPlayers = {};
     randomizeTiles();
     document.getElementById('goalMessage').textContent = "Select one player for each position to build your dream team!";
 }
