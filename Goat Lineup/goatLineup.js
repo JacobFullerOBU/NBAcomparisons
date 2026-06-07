@@ -107,19 +107,30 @@ function getLineupRecord(selectedPlayers) {
 }
 
 function checkGoal() {
-    if (Object.keys(selectedPlayers).length === positions.length) {
+    const filledCount = Object.keys(selectedPlayers).length;
+    const msgEl = document.getElementById('goalMessage');
+
+    if (filledCount === 0) {
+        msgEl.textContent = "Select one player for each position to build your dream team!";
+        return;
+    }
+
+    if (filledCount === positions.length) {
         const { wins, losses } = getLineupRecord(selectedPlayers);
         if (wins === 82 && losses === 0) {
-            document.getElementById('goalMessage').textContent =
-                "Congrats! You built your 82-0 GOAT lineup!";
+            msgEl.textContent = "Congrats! You built your 82-0 GOAT lineup!";
         } else {
-            document.getElementById('goalMessage').textContent =
-                `Your lineup record is ${wins}-${losses}. Try to find the 82-0 combo!`;
+            msgEl.textContent = `Final record: ${wins}-${losses}. Try to find the 82-0 combo!`;
         }
-    } else {
-        document.getElementById('goalMessage').textContent =
-            "Select one player for each position to build your dream team!";
+        return;
     }
+
+    // Project the final record based on the average score of picked players so far
+    const partialScore = Object.values(selectedPlayers).reduce((sum, p) => sum + (p.score || 0), 0);
+    const avgScore = partialScore / filledCount;
+    const projected = Math.min(Math.round(avgScore * positions.length), 82);
+    const projLosses = Math.max(0, 82 - projected);
+    msgEl.textContent = `${filledCount}/${positions.length} picked — Projected record: ${projected}-${projLosses}`;
 }
 
 function restartGame() {
