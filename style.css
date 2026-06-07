@@ -412,6 +412,21 @@ header h1 {
 }
 
 /* ===== WIDGETS ===== */
+.widgets-section {
+    max-width: 1200px;
+    margin: 0 auto 8px;
+    padding: 0 24px;
+}
+
+.widgets-section-label {
+    font-size: 0.75em;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #445;
+    margin: 0 0 10px;
+}
+
 .widgets-row {
     display: flex;
     justify-content: center;
@@ -428,6 +443,27 @@ header h1 {
     border-radius: 12px;
     padding: 12px;
     overflow: hidden;
+    min-height: 220px;
+    position: relative;
+}
+
+.widget-col::before {
+    content: 'Loading…';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #334;
+    font-size: 0.8em;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    animation: widgetPulse 1.6s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes widgetPulse {
+    0%, 100% { opacity: 0.3; }
+    50%       { opacity: 0.8; }
 }
 
 #powered-by {
@@ -589,6 +625,10 @@ header h1 {
         height: 52px;
     }
 
+    .widgets-section {
+        padding: 0 14px;
+    }
+
     .widgets-row {
         flex-direction: column;
         padding: 0 14px;
@@ -597,6 +637,7 @@ header h1 {
 
     .widget-col {
         max-width: 100%;
+        min-height: 180px;
     }
 
     #auth-container {
