@@ -7,16 +7,17 @@
     <link rel="stylesheet" href="goatStyles.css">
 </head>
 <body>
+    <nav id="top-nav">
+        <a href="../index.html" id="home-btn">&#127968; Home</a>
+        <span class="nav-title">GOAT Lineup</span>
+        <button id="restart-btn" onclick="restartGame()">&#8635; Restart</button>
+    </nav>
     <header>
         <h1>GOAT Lineup Game</h1>
         <p class="subtitle">Build Your 82-0 Squad</p>
     </header>
     <div id="lineupContainer"></div>
     <div class="goal-message" id="goalMessage">Select one player for each position to build your dream team!</div>
-    <div id="button-row">
-        <button id="restart-btn" onclick="restartGame()">&#8635; Restart</button>
-        <a href="../index.html" id="home-btn">&#127968; Home</a>
-    </div>
     <script src="goatLineup.js"></script>
 </body>
 </html>
