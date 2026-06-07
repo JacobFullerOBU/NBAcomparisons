@@ -371,12 +371,14 @@ header h1 {
 
 /* ===== GAME GRID ===== */
 .game-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
+    justify-content: center;
 }
 
 .game-item {
+    flex: 0 0 calc(33.333% - 7px);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -630,8 +632,8 @@ header h1 {
         padding: 18px 16px;
     }
 
-    .game-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .game-item {
+        flex: 0 0 calc(50% - 5px);
     }
 
     .highlight-images {
