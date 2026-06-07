@@ -486,6 +486,71 @@ header h1 {
 }
 
 
+/* ===== FOOTER ===== */
+footer {
+    background: #080a0f;
+    border-top: 1px solid #1e2130;
+    margin-top: 16px;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 28px 0;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #1a1c28;
+}
+
+.footer-heading {
+    font-size: 0.72em;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f47b20;
+    margin: 0 0 14px;
+}
+
+.footer-about {
+    font-size: 0.82em;
+    color: #445;
+    line-height: 1.65;
+    margin: 0;
+}
+
+.footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-links a {
+    font-size: 0.82em;
+    color: #556;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: #f47b20;
+}
+
+.footer-bottom {
+    padding: 16px 0;
+    text-align: center;
+    font-size: 0.7em;
+    color: #2a2d3a;
+    letter-spacing: 0.3px;
+}
+
 /* ===== TABLET (641px – 900px) ===== */
 @media (max-width: 900px) {
     .hub-sections {
@@ -499,6 +564,14 @@ header h1 {
 
     .records-grid {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .footer-col:first-child {
+        grid-column: 1 / -1;
     }
 }
 
@@ -604,6 +677,19 @@ header h1 {
     .widget-col {
         max-width: 100%;
         min-height: 180px;
+    }
+
+    .footer-inner {
+        padding: 28px 16px 0;
+    }
+
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .footer-col:first-child {
+        grid-column: auto;
     }
 
     /* Highlights section mobile */
