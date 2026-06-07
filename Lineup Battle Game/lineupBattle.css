@@ -573,3 +573,184 @@ body {
     color: #232323;
     font-size: 1em;
 }
+
+/* ===== TABLET (601px – 900px) ===== */
+@media (max-width: 900px) {
+    .player-card {
+        width: 140px;
+        padding: 8px;
+    }
+
+    #draft-selection-area {
+        padding: 15px 20px;
+        margin: 12px auto;
+    }
+
+    .results-modal {
+        width: 90%;
+    }
+
+    .final-score {
+        font-size: 2em;
+    }
+
+    .modifier-card {
+        width: 170px;
+    }
+}
+
+/* ===== MOBILE (≤600px) ===== */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.2em;
+        margin-top: 14px;
+        letter-spacing: 0.5px;
+        padding: 0 8px;
+    }
+
+    /* Draft selection area */
+    #draft-selection-area {
+        padding: 10px 8px;
+        margin: 8px;
+        border-radius: 10px;
+    }
+
+    #selectionGrid {
+        gap: 8px;
+        min-height: 160px;
+    }
+
+    /* Player cards: smaller on mobile, rely on horizontal scroll */
+    .player-card {
+        width: 115px;
+        padding: 7px 6px;
+        font-size: 0.82em;
+        flex-shrink: 0;
+    }
+
+    .player-card .player-stats {
+        font-size: 0.68em;
+        gap: 2px;
+        padding: 5px 0;
+    }
+
+    .player-card .player-tags {
+        gap: 3px;
+        margin-top: 5px;
+    }
+
+    .player-card .tag-badge {
+        font-size: 0.62em;
+        padding: 1px 4px;
+    }
+
+    .archetype-icons {
+        font-size: 0.9em;
+        gap: 4px;
+        top: 5px;
+        right: 5px;
+    }
+
+    /* Player grids: horizontal scroll, reduced height */
+    .player-grid {
+        min-height: 180px;
+        padding: 6px;
+        gap: 8px;
+    }
+
+    /* Game controls */
+    #game-controls {
+        margin: 10px 8px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    #game-controls button {
+        padding: 8px 14px;
+        font-size: 0.88em;
+        margin: 0;
+    }
+
+    #gameMessage {
+        width: 100%;
+        font-size: 0.9em;
+        padding: 0 8px;
+    }
+
+    /* Results modal */
+    .results-modal {
+        width: 95%;
+        padding: 12px 10px;
+    }
+
+    .modal-content {
+        padding: 12px 10px;
+    }
+
+    .final-score {
+        font-size: 1.6em;
+        padding: 8px 4px;
+        letter-spacing: 0.5px;
+        margin-bottom: 14px;
+    }
+
+    /* Stack box scores vertically on mobile */
+    .box-scores {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .box-scores table {
+        font-size: 0.75em;
+    }
+
+    .box-scores th, .box-scores td {
+        padding: 4px 3px;
+        font-size: 0.9em;
+    }
+
+    .simulation-log {
+        height: 80px;
+        font-size: 0.88em;
+        padding: 10px;
+    }
+
+    /* Chart: scale down to fit mobile width */
+    #quarterPointsChart {
+        max-width: 100%;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    #playAgainButton {
+        margin-top: 14px;
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+
+    /* Modifier card modal */
+    .modifier-card {
+        width: 135px;
+        padding: 12px 8px;
+        font-size: 0.88em;
+    }
+
+    .modifier-card-grid {
+        gap: 10px;
+        max-height: 250px;
+    }
+
+    /* Team totals */
+    .team-totals {
+        font-size: 0.88em;
+        padding: 10px 8px;
+    }
+
+    .team-total-attr {
+        min-width: 90px;
+        font-size: 0.88em;
+        margin: 2px 6px 2px 0;
+    }
+}
