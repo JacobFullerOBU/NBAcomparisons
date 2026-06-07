@@ -91,19 +91,18 @@ function renderTiles() {
     });
 }
 
-// Calculate the combined record based on player scores
+// Max achievable score: PG=16 (Magic/Curry), SG=18 (Jordan/Kobe), SF=18 (LeBron),
+// PF=16 (Duncan/KG), C=18 (Shaq), 6th=18 (remaining GOAT) → 104
+const MAX_LINEUP_SCORE = 104;
+
 function getLineupRecord(selectedPlayers) {
     let totalScore = 0;
     positions.forEach(pos => {
         const player = selectedPlayers[pos.key];
-        if (player) {
-            totalScore += player.score || 0;
-        }
+        if (player) totalScore += player.score || 0;
     });
-    // Clamp totalScore to a maximum of 82
-    totalScore = Math.min(totalScore, 82);
-    // Wins = totalScore, Losses = 82 - totalScore (never negative)
-    return { wins: totalScore, losses: Math.max(0, 82 - totalScore) };
+    const wins = Math.min(82, Math.floor(totalScore / MAX_LINEUP_SCORE * 82));
+    return { wins, losses: Math.max(0, 82 - wins) };
 }
 
 function checkGoal() {
@@ -128,7 +127,8 @@ function checkGoal() {
     // Project the final record based on the average score of picked players so far
     const partialScore = Object.values(selectedPlayers).reduce((sum, p) => sum + (p.score || 0), 0);
     const avgScore = partialScore / filledCount;
-    const projected = Math.min(Math.round(avgScore * positions.length), 82);
+    const projectedTotal = Math.round(avgScore * positions.length);
+    const projected = Math.min(82, Math.floor(projectedTotal / MAX_LINEUP_SCORE * 82));
     const projLosses = Math.max(0, 82 - projected);
     msgEl.textContent = `${filledCount}/${positions.length} picked — Projected record: ${projected}-${projLosses}`;
 }

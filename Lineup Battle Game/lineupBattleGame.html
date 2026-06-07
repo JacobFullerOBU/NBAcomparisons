@@ -9,8 +9,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+    <nav id="top-nav">
+        <a href="../index.html" id="home-btn">&#127968; Home</a>
+        <span class="nav-title">Lineup Battle</span>
+        <div class="nav-spacer"></div>
+    </nav>
     <header>
         <h1>Lineup Battle</h1>
+        <p class="subtitle">Draft Your Team. Dominate the CPU.</p>
     </header>
     <main>
         <div class="team-container" id="userTeamContainer">
@@ -66,7 +72,6 @@
             <button onclick="document.getElementById('modifierCardModal').style.display='none'">Cancel</button>
         </div>
     </div>
-    <a href="../index.html" id="home-btn" title="Home">🏠 Home</a>
     <script src="lineupBattle.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
