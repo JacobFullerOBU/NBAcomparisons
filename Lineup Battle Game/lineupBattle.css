@@ -240,7 +240,9 @@ body {
     display: flex;
     gap: 20px;
     justify-content: center;
+    overflow-x: auto;
     min-height: 220px; /* Prevent layout shift */
+    padding-bottom: 10px; /* room for scrollbar */
 }
 
 #selectionGrid .player-card {
@@ -410,10 +412,39 @@ body {
     display: flex;
     justify-content: center;
     gap: 15px;
-    flex-wrap: nowrap; /* Prevents cards from wrapping to the next line */
-    overflow-x: auto;  /* Adds a scrollbar if cards overflow the container */
-    padding: 10px;     /* Ensures cards don't touch the container edges */
-    min-height: 280px; /* Prevents layout shifts while cards are loading */
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 10px 10px 14px; /* extra bottom padding so scrollbar doesn't overlap cards */
+    min-height: 280px;
+}
+
+/* ===== VISIBLE SCROLLBAR (both grids) ===== */
+.player-grid,
+#selectionGrid {
+    scrollbar-width: thin;
+    scrollbar-color: #00aaff #1e1e1e;
+}
+
+.player-grid::-webkit-scrollbar,
+#selectionGrid::-webkit-scrollbar {
+    height: 5px;
+}
+
+.player-grid::-webkit-scrollbar-track,
+#selectionGrid::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 3px;
+}
+
+.player-grid::-webkit-scrollbar-thumb,
+#selectionGrid::-webkit-scrollbar-thumb {
+    background: #00aaff;
+    border-radius: 3px;
+}
+
+.player-grid::-webkit-scrollbar-thumb:hover,
+#selectionGrid::-webkit-scrollbar-thumb:hover {
+    background: #33bbff;
 }
 
 
@@ -651,11 +682,52 @@ body {
         right: 5px;
     }
 
-    /* Player grids: horizontal scroll, reduced height */
-    .player-grid {
-        min-height: 180px;
-        padding: 6px;
+    /* ---- Position slot cards (Your Team / CPU Team) — compact ---- */
+    #userPlayerGrid .player-card,
+    #cpuPlayerGrid .player-card {
+        width: 76px;
+        padding: 6px 4px;
+        font-size: 0.7em;
+        flex-shrink: 0;
+    }
+
+    #userPlayerGrid .player-card img,
+    #cpuPlayerGrid .player-card img {
+        width: 44px !important;
+        height: 44px !important;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* Hide stats, tags, and archetype icons on position slots — just show name + position */
+    #userPlayerGrid .player-card .player-stats,
+    #cpuPlayerGrid .player-card .player-stats,
+    #userPlayerGrid .player-card .player-tags,
+    #cpuPlayerGrid .player-card .player-tags,
+    #userPlayerGrid .player-card .archetype-icons,
+    #cpuPlayerGrid .player-card .archetype-icons {
+        display: none;
+    }
+
+    /* Team grids: smaller height to match compact cards, scroll with visible bar */
+    #userPlayerGrid,
+    #cpuPlayerGrid {
+        min-height: 130px;
+        padding: 8px 12px 14px;
         gap: 8px;
+        justify-content: flex-start;
+    }
+
+    /* ---- Selection grid: horizontal scroll, start from left so cards peek ---- */
+    #selectionGrid {
+        justify-content: flex-start;
+        padding: 8px 12px 16px;
+        gap: 10px;
+        min-height: unset;
+    }
+
+    #selectionGrid .player-card {
+        flex-shrink: 0;
     }
 
     /* Game controls */
