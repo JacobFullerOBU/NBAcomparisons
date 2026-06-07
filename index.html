@@ -30,33 +30,6 @@
   const analytics = getAnalytics(app);
   firebase.initializeApp(firebaseConfig);
 
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            firebase.auth().signInWithEmailAndPassword(email, password)
-                .then(() => document.getElementById('auth-message').textContent = "Logged in!")
-                .catch(e => document.getElementById('auth-message').textContent = e.message);
-        }
-
-        function register() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then(() => document.getElementById('auth-message').textContent = "Account created!")
-                .catch(e => document.getElementById('auth-message').textContent = e.message);
-        }
-
-        firebase.auth().onAuthStateChanged(user => {
-            if (user) {
-                // Show logged-in UI
-                document.getElementById('auth-container').style.display = 'none';
-                document.getElementById('welcome-message').textContent = `Welcome, ${user.email}`;
-            } else {
-                // Show login/register form
-                document.getElementById('auth-container').style.display = 'block';
-                document.getElementById('welcome-message').textContent = '';
-            }
-        });
 </script>
 </head>
 
@@ -84,7 +57,6 @@
         <section class="hero-section">
             <h2>Your Ultimate NBA Hub</h2>
             <p>Explore stats, play games, compare players and teams - everything NBA in one place</p>
-            <div id="welcome-message"></div>
         </section>
 
         <!-- Main Content Grid -->
@@ -268,13 +240,6 @@
             }
         });
     </script>
-    <div id="auth-container">
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Login</button>
-        <button onclick="register()">Register</button>
-        <div id="auth-message"></div>
-    </div>
 </body>
 
 </html>

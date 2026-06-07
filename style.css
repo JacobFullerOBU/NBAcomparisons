@@ -131,12 +131,6 @@ header h1 {
     margin: 0;
 }
 
-#welcome-message {
-    margin-top: 14px;
-    font-weight: 600;
-    color: #f47b20;
-    font-size: 1em;
-}
 
 /* ===== HUB CARD GRID ===== */
 .hub-sections {
@@ -483,62 +477,6 @@ header h1 {
     color: #ffd700;
 }
 
-/* ===== AUTH CONTAINER ===== */
-#auth-container {
-    max-width: 320px;
-    margin: 12px auto 40px;
-    padding: 24px;
-    background: #1e2130;
-    border: 1px solid #22253a;
-    border-radius: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-#auth-container input {
-    background: #0d0d12;
-    border: 1px solid #22253a;
-    border-radius: 8px;
-    color: #e8e8f0;
-    padding: 10px 14px;
-    font-size: 0.9em;
-    outline: none;
-    width: 100%;
-    transition: border-color 0.2s;
-}
-
-#auth-container input:focus {
-    border-color: #f47b20;
-}
-
-#auth-container input::placeholder {
-    color: #445;
-}
-
-#auth-container button {
-    background: linear-gradient(135deg, #f47b20, #c85e0a);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-    font-weight: 700;
-    font-size: 0.9em;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-#auth-container button:hover {
-    background: linear-gradient(135deg, #ff9040, #f47b20);
-}
-
-#auth-message {
-    font-size: 0.83em;
-    color: #f47b20;
-    text-align: center;
-    min-height: 1em;
-}
 
 /* ===== TABLET (641px – 900px) ===== */
 @media (max-width: 900px) {
@@ -658,11 +596,6 @@ header h1 {
     .widget-col {
         max-width: 100%;
         min-height: 180px;
-    }
-
-    #auth-container {
-        margin: 12px 14px 36px;
-        max-width: 100%;
     }
 
     /* Highlights section mobile */
