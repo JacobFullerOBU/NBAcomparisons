@@ -15,9 +15,6 @@
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
     apiKey: "AIzaSyBoifaOgIDCQJV921euCJNPaLTLp3P96J4",
     authDomain: "nba-page-dabba.firebaseapp.com",
@@ -102,19 +99,6 @@
                 </div>
             </div>
 
-            <!-- Highlights Section -->
-            <div class="hub-card highlights-section">
-                <h3>🏀 Highlights & History</h3>
-                <p>Relive the greatest NBA moments and achievements</p>
-                <div class="highlight-images">
-                    <img src="./Trivia Game/Images/Michael Jordan 63 points.jpg" alt="Michael Jordan 63 points" class="highlight-img">
-                    <img src="./Trivia Game/Images/73 Win Warriors.jpg" alt="73 Win Warriors" class="highlight-img">
-                </div>
-                <div class="card-links">
-                    <a href="./Trivia Game/triviaGame.html" class="card-link">NBA Trivia</a>
-                </div>
-            </div>
-
             <!-- Stats Section -->
             <div class="hub-card stats-section">
                 <h3>📊 Stats & Analysis</h3>
@@ -156,6 +140,91 @@
                 </div>
             </div>
         </section>
+
+        <!-- Highlights & History — full width -->
+        <div class="hub-card highlights-section">
+            <h3>🏀 Highlights &amp; History</h3>
+            <p>Relive the greatest NBA moments and record-breaking achievements</p>
+
+            <div class="highlight-images">
+                <div class="highlight-img-wrap">
+                    <img src="./Trivia Game/Images/Michael Jordan 63 points.jpg" alt="Michael Jordan 63 points" class="highlight-img">
+                    <span class="highlight-caption">MJ's 63-pt Playoff Game · 1986</span>
+                </div>
+                <div class="highlight-img-wrap">
+                    <img src="./Trivia Game/Images/73 Win Warriors.jpg" alt="73 Win Warriors" class="highlight-img">
+                    <span class="highlight-caption">Warriors' Record 73-Win Season · 2016</span>
+                </div>
+            </div>
+
+            <div class="highlights-content">
+                <div class="highlights-col">
+                    <h4 class="subsection-label">📋 All-Time Records</h4>
+                    <div class="records-grid">
+                        <div class="record-card">
+                            <span class="record-value">100</span>
+                            <span class="record-label">Points in a game</span>
+                            <span class="record-player">Wilt Chamberlain · 1962</span>
+                        </div>
+                        <div class="record-card">
+                            <span class="record-value">73-9</span>
+                            <span class="record-label">Best season record</span>
+                            <span class="record-player">Golden State Warriors · 2016</span>
+                        </div>
+                        <div class="record-card">
+                            <span class="record-value">33</span>
+                            <span class="record-label">Consecutive wins</span>
+                            <span class="record-player">Los Angeles Lakers · 1972</span>
+                        </div>
+                        <div class="record-card">
+                            <span class="record-value">50.4</span>
+                            <span class="record-label">Season scoring avg</span>
+                            <span class="record-player">Wilt Chamberlain · 1962</span>
+                        </div>
+                        <div class="record-card">
+                            <span class="record-value">11</span>
+                            <span class="record-label">Championships won</span>
+                            <span class="record-player">Bill Russell</span>
+                        </div>
+                        <div class="record-card">
+                            <span class="record-value">38,652</span>
+                            <span class="record-label">Career points record</span>
+                            <span class="record-player">LeBron James · 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="highlights-col">
+                    <h4 class="subsection-label">⏱️ Iconic Moments</h4>
+                    <ul class="moments-list">
+                        <li class="moment-item">
+                            <span class="moment-year">1962</span>
+                            <span class="moment-desc">Wilt Chamberlain scores 100 points in a single game against the Knicks — an untouched record more than 60 years later.</span>
+                        </li>
+                        <li class="moment-item">
+                            <span class="moment-year">1986</span>
+                            <span class="moment-desc">Michael Jordan erupts for 63 points on the Celtics in the playoffs, still the all-time single-game playoff scoring record.</span>
+                        </li>
+                        <li class="moment-item">
+                            <span class="moment-year">1997</span>
+                            <span class="moment-desc">Jordan battles the flu to drop 38 points in Game 5 of the NBA Finals, lifting the Bulls to a series-clinching position.</span>
+                        </li>
+                        <li class="moment-item">
+                            <span class="moment-year">2016</span>
+                            <span class="moment-desc">The Cleveland Cavaliers become the first team to overcome a 3–1 Finals deficit, delivering Cleveland its first championship.</span>
+                        </li>
+                        <li class="moment-item">
+                            <span class="moment-year">2023</span>
+                            <span class="moment-desc">LeBron James surpasses Kareem Abdul-Jabbar's 39-year-old record to become the NBA's all-time leading scorer.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card-links" style="margin-top: 20px;">
+                <a href="./Trivia Game/triviaGame.html" class="card-link">🧠 Test Your Knowledge</a>
+            </div>
+        </div>
     </div>
     <div class="widgets-row">
         <div class="widget-col">
