@@ -342,20 +342,33 @@ body {
 .box-scores table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9em;
+    font-size: 0.82em;
 }
 
 .box-scores th, .box-scores td {
     color: #111 !important;
     background-color: #f8f8f8 !important;
     font-weight: bold;
-    font-size: 1.05em;
+    padding: 5px 6px;
+    white-space: nowrap;
 }
 
 .box-scores th {
     background-color: #ffd700 !important;
     color: #232323 !important;
-    font-size: 1.1em;
+    font-size: 0.95em;
+    text-align: center;
+}
+
+.box-scores td:first-child {
+    text-align: left;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.box-scores td:not(:first-child) {
+    text-align: center;
 }
 
 .box-scores tfoot td {

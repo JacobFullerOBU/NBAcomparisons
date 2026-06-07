@@ -373,86 +373,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function startBattle() {
         battleButton.disabled = true;
-        const userRatings = calculateTeamRatings(userTeam);
-        const cpuRatings = calculateTeamRatings(cpuTeam);
 
-        // Pure stat-based scoring: sum of weighted stats, scaled to NBA range
-        // You can tune the divisor (e.g., 2.5) to get typical NBA scores
-        const baseScore = 80; // NBA teams rarely score less than 80
-        const scalingFactor = 12; // Increase to lower scores, decrease to raise scores
-        const clamp = (val, min, max) => Math.max(min, Math.min(max, val));
-
-        const userScoreRaw = baseScore + userRatings.weightedTotal / scalingFactor;
-        const cpuScoreRaw = baseScore + cpuRatings.weightedTotal / scalingFactor;
-
-        // Add a little randomness for realism
-        const userScore = clamp(Math.round(userScoreRaw + (Math.random() * 6 - 3)), 80, 130);
-        const cpuScore = clamp(Math.round(cpuScoreRaw + (Math.random() * 6 - 3)), 80, 130);
-
-        // --- Quarter Simulation ---
-        const quarters = 4;
-        let userQuarterScores = [];
-        let cpuQuarterScores = [];
-        let eventLogs = []; // Collect event messages
-
-        // NBA teams often have higher 2nd/3rd quarter, so use a profile
+        // baseScore is the per-game floor. scalingFactor converts weightedTotal to points.
+        // Player stats are 70–99; 6 players → weightedTotal ≈ 2200–3100.
+        // scalingFactor 70 yields realistic GOAT-lineup totals of ~108–126 per game.
+        const baseScore = 80;
+        const scalingFactor = 70;
+        // NBA scoring tends to peak in Q2 and Q3
         const quarterProfile = [0.23, 0.27, 0.27, 0.23];
 
-        for (let q = 0; q < quarters; q++) {
-            // --- In-game events ---
+        let userQuarterScores = [];
+        let cpuQuarterScores = [];
+        let eventLogs = [];
+
+        for (let q = 0; q < 4; q++) {
+            // Apply one event per team BEFORE computing this quarter's score
+            // so events have a real mechanical effect on the result.
             if (gameEvents.length > 0) {
-                // User event
                 const userEvent = gameEvents[Math.floor(Math.random() * gameEvents.length)];
                 applyGameEvent(userTeam, userEvent, eventLogs, "Your Team: ");
-
-                // CPU event
                 const cpuEvent = gameEvents[Math.floor(Math.random() * gameEvents.length)];
                 applyGameEvent(cpuTeam, cpuEvent, eventLogs, "CPU Team: ");
             }
 
+            // Recalculate ratings after event-driven stat changes
+            const userRatingsQ = calculateTeamRatings(userTeam);
+            const cpuRatingsQ  = calculateTeamRatings(cpuTeam);
+
+            // Quarter base = that quarter's share of baseScore + stat-driven contribution
+            const userQBase = baseScore * quarterProfile[q] + userRatingsQ.weightedTotal / (scalingFactor * 4);
+            const cpuQBase  = baseScore * quarterProfile[q] + cpuRatingsQ.weightedTotal  / (scalingFactor * 4);
+
             let userRand = 0.75 + Math.random() * 0.5;
-            let cpuRand = 0.75 + Math.random() * 0.5;
+            let cpuRand  = 0.75 + Math.random() * 0.5;
 
-            // 10% chance for a hot quarter (1.35x) or cold quarter (0.65x)
-            if (Math.random() < 0.10) userRand *= (Math.random() < 0.5 ? 1.35 : 0.65);
-            if (Math.random() < 0.10) cpuRand *= (Math.random() < 0.5 ? 1.35 : 0.65);
+            // 10% chance of a hot (1.35×) or cold (0.65×) quarter
+            if (Math.random() < 0.10) userRand *= Math.random() < 0.5 ? 1.35 : 0.65;
+            if (Math.random() < 0.10) cpuRand  *= Math.random() < 0.5 ? 1.35 : 0.65;
 
-            let userQ, cpuQ;
+            let userQ = Math.round(userQBase * userRand);
+            let cpuQ  = Math.round(cpuQBase  * cpuRand);
+
+            // 4th quarter: small clutch bonus (clutch sum ~540 → ~3–4 extra pts)
             if (q === 3) {
-                // 4th quarter: add clutch impact
-                const clutchImpactUser = userRatings.clutch * (0.15 + Math.random() * 0.10); // 15-25% of clutch
-                const clutchImpactCpu = cpuRatings.clutch * (0.15 + Math.random() * 0.10);
-                userQ = Math.round(userScore * quarterProfile[q] * userRand + clutchImpactUser);
-                cpuQ = Math.round(cpuScore * quarterProfile[q] * cpuRand + clutchImpactCpu);
-            } else {
-                userQ = Math.round(userScore * quarterProfile[q] * userRand);
-                cpuQ = Math.round(cpuScore * quarterProfile[q] * cpuRand);
+                userQ += Math.round(userRatingsQ.clutch / 150);
+                cpuQ  += Math.round(cpuRatingsQ.clutch  / 150);
             }
 
-            // Ensure no negative quarters
-            userQ = Math.max(0, userQ);
-            cpuQ = Math.max(0, cpuQ);
-
-            userQuarterScores.push(userQ);
-            cpuQuarterScores.push(cpuQ);
+            userQuarterScores.push(Math.max(5, userQ));
+            cpuQuarterScores.push(Math.max(5, cpuQ));
         }
 
-        // Adjust last quarter so totals match exactly (including clutch)
-        const userSoFar = userQuarterScores.reduce((a, b) => a + b, 0);
-        const cpuSoFar = cpuQuarterScores.reduce((a, b) => a + b, 0);
-        userQuarterScores[3] += userScore - userSoFar;
-        cpuQuarterScores[3] += cpuScore - cpuSoFar;
-
-        // Tiebreaker: if still tied, randomly add 1-2 points to one team
         let userTotal = userQuarterScores.reduce((a, b) => a + b, 0);
-        let cpuTotal = cpuQuarterScores.reduce((a, b) => a + b, 0);
+        let cpuTotal  = cpuQuarterScores.reduce((a, b) => a + b, 0);
+
+        // Tiebreaker: give one team 1–2 extra points in Q4
         if (userTotal === cpuTotal) {
+            const bonus = Math.ceil(Math.random() * 2);
             if (Math.random() < 0.5) {
-                userQuarterScores[3] += Math.floor(Math.random() * 2) + 1;
-                userTotal += 1;
+                userQuarterScores[3] += bonus;
+                userTotal += bonus;
             } else {
-                cpuQuarterScores[3] += Math.floor(Math.random() * 2) + 1;
-                cpuTotal += 1;
+                cpuQuarterScores[3] += bonus;
+                cpuTotal += bonus;
             }
         }
 
@@ -597,116 +580,119 @@ document.addEventListener('DOMContentLoaded', () => {
         const players = Object.values(team).filter(p => p);
         if (players.length === 0) return;
 
-        // Positional multipliers to generate more realistic stat lines
-        const positionalMultipliers = {
-            rebounds: {
-                PG: 0.6,
-                SG: 0.8,
-                SF: 1.0,
-                PF: 1.3,
-                C: 1.5,
-                '6th': 0.9
-            },
-            assists: {
-                PG: 1.4,
-                SG: 1.1,
-                SF: 1.0,
-                PF: 0.8,
-                C: 0.7,
-                '6th': 0.9
-            }
+        // Positional multipliers — strong differences so bigs dominate reb/blk, guards dominate ast/stl
+        const posMult = {
+            rebounds:  { PG: 0.50, SG: 0.70, SF: 1.00, PF: 1.45, C: 1.80, '6th': 0.90 },
+            assists:   { PG: 1.55, SG: 1.15, SF: 0.90, PF: 0.70, C: 0.55, '6th': 0.95 },
+            steals:    { PG: 1.55, SG: 1.30, SF: 1.00, PF: 0.65, C: 0.35, '6th': 0.90 },
+            blocks:    { PG: 0.15, SG: 0.25, SF: 0.60, PF: 1.25, C: 2.30, '6th': 0.50 },
+            turnovers: { PG: 1.40, SG: 1.10, SF: 1.00, PF: 0.90, C: 0.75, '6th': 0.95 },
         };
 
-        let playerStats = [];
-        let totalTeamPlaymaking = 0;
-        let totalTeamOffense = 0;
-        let totalReboundPotential = 0;
+        // Realistic team-level targets per game
+        const targetReb = 42 + Math.floor(Math.random() * 7);  // 42–48
+        const targetAst = 20 + Math.floor(Math.random() * 9);  // 20–28
+        const targetStl =  5 + Math.floor(Math.random() * 6);  //  5–10
+        const targetBlk =  2 + Math.floor(Math.random() * 6);  //  2–7
+        const targetTO  = 10 + Math.floor(Math.random() * 8);  // 10–17
 
-        players.forEach(p => {
-            totalTeamPlaymaking += p.stats.playmaking;
-            totalTeamOffense += p.stats.offense;
+        const playerStats = players.map(p => ({ player: p, pts: 0, reb: 0, ast: 0, stl: 0, blk: 0, to: 0 }));
 
-            // Calculate individual rebound potential to be used for distribution
-            const playerPosition = p.position || '6th';
-            const rebMultiplier = positionalMultipliers.rebounds[playerPosition] || 1.0;
-            const reboundScore = (p.stats.defense * 0.7 + p.stats.athleticism * 0.3) * rebMultiplier;
-            playerStats.push({
-                player: p,
-                pts: 0,
-                reb: 0,
-                ast: 0,
-                reboundScore: reboundScore
-            });
-            totalReboundPotential += reboundScore;
-        });
-
-        // 1. Generate Assists and Rebounds for each player first
-        let totalTeamAssists = 0;
-        const targetTeamRebounds = 42 + Math.floor(Math.random() * 7); // Target ~45 rebounds
-
-        playerStats.forEach(stat => {
-            const p = stat.player;
-            const playerPosition = p.position || '6th';
-            const astMultiplier = positionalMultipliers.assists[playerPosition] || 1.0;
-
-            // Distribute rebounds based on each player's share of the team's total rebound potential
-            const shareOfRebounds = stat.reboundScore / totalReboundPotential;
-            stat.reb = Math.round(targetTeamRebounds * shareOfRebounds);
-
-            // Assists based on player's share of team's total playmaking, modified by position
-            const ast = Math.round((((p.stats.playmaking / totalTeamPlaymaking) * (teamScore * 0.22)) + Math.random() * 2) * astMultiplier);
-            stat.ast = ast;
-            totalTeamAssists += ast;
-        });
-
-        // 2. Calculate points generated from assists
-        let pointsFromAssists = 0;
-        for (let i = 0; i < totalTeamAssists; i++) {
-            pointsFromAssists += (Math.random() < 0.3) ? 3 : 2; // 30% chance of an assist being for a 3-pointer
+        // Distribute `total` among players using weighted random shares.
+        // weightFn(stat) returns a player's raw weight (before normalisation).
+        // Randomising each weight is what creates game-to-game variance —
+        // a player can go 0.3× cold or 2.0× hot regardless of their base rating.
+        function distribute(total, weightFn) {
+            const weights = playerStats.map(weightFn);
+            const totalW  = weights.reduce((a, b) => a + b, 0);
+            const values  = [];
+            let remaining = total;
+            for (let i = 0; i < playerStats.length; i++) {
+                if (i === playerStats.length - 1) {
+                    values.push(Math.max(0, remaining));
+                } else {
+                    const share = Math.max(0, Math.round(total * weights[i] / totalW));
+                    values.push(share);
+                    remaining -= share;
+                }
+            }
+            return values;
         }
 
-        // 3. Distribute all points (assisted and unassisted) based on offense rating
-        let pointsToDistribute = teamScore;
-        let distributedPoints = 0;
+        // --- Points ---
+        // Hot/cold multiplier 0.3×–2.0× creates genuine outlier performances
+        const pts = distribute(teamScore, s =>
+            s.player.stats.offense * (0.3 + Math.random() * 1.7)
+        );
+        playerStats.forEach((s, i) => { s.pts = pts[i]; });
 
-        playerStats.forEach((stat, index) => {
-            const shareOfOffense = stat.player.stats.offense / totalTeamOffense;
-            let calculatedPoints = 0;
-            // Ensure the last player gets the remaining points to match the total score
-            if (index === playerStats.length - 1) {
-                calculatedPoints = pointsToDistribute - distributedPoints;
-            } else {
-                calculatedPoints = Math.round(pointsToDistribute * shareOfOffense);
-            }
-            stat.pts = calculatedPoints;
-            distributedPoints += calculatedPoints;
+        // --- Rebounds ---
+        // Based on defense + athleticism, skewed heavily by position
+        const reb = distribute(targetReb, s => {
+            const pos  = s.player.position || '6th';
+            const base = s.player.stats.defense * 0.6 + s.player.stats.athleticism * 0.4;
+            return base * (posMult.rebounds[pos] || 1.0) * (0.4 + Math.random() * 1.2);
         });
+        playerStats.forEach((s, i) => { s.reb = reb[i]; });
 
-        // 4. Calculate totals and build the table body
-        let totalPts = 0,
-            totalReb = 0,
-            totalAst = 0;
+        // --- Assists ---
+        const ast = distribute(targetAst, s => {
+            const pos = s.player.position || '6th';
+            return s.player.stats.playmaking * (posMult.assists[pos] || 1.0) * (0.3 + Math.random() * 1.4);
+        });
+        playerStats.forEach((s, i) => { s.ast = ast[i]; });
+
+        // --- Steals ---
+        const stl = distribute(targetStl, s => {
+            const pos = s.player.position || '6th';
+            return s.player.stats.defense * (posMult.steals[pos] || 1.0) * (0.3 + Math.random() * 1.4);
+        });
+        playerStats.forEach((s, i) => { s.stl = stl[i]; });
+
+        // --- Blocks ---
+        const blk = distribute(targetBlk, s => {
+            const pos = s.player.position || '6th';
+            return s.player.stats.defense * (posMult.blocks[pos] || 1.0) * (0.3 + Math.random() * 1.4);
+        });
+        playerStats.forEach((s, i) => { s.blk = blk[i]; });
+
+        // --- Turnovers ---
+        // High usage drives TOs up; good playmaking pulls them down
+        const to = distribute(targetTO, s => {
+            const pos   = s.player.position || '6th';
+            const usage = s.player.stats.offense * 0.6 + s.player.stats.playmaking * 0.4;
+            const pmAdj = 1 - (s.player.stats.playmaking / 500); // elite playmakers protect the ball
+            return usage * pmAdj * (posMult.turnovers[pos] || 1.0) * (0.5 + Math.random());
+        });
+        playerStats.forEach((s, i) => { s.to = to[i]; });
+
+        // --- Build table ---
+        let totalPts = 0, totalReb = 0, totalAst = 0, totalStl = 0, totalBlk = 0, totalTO = 0;
         let tableBodyHtml = '';
         playerStats.forEach(s => {
-            tableBodyHtml += `<tr><td>${s.player.name}</td><td>${s.pts}</td><td>${s.reb}</td><td>${s.ast}</td></tr>`;
-            totalPts += s.pts;
-            totalReb += s.reb;
-            totalAst += s.ast;
+            tableBodyHtml += `<tr>
+                <td>${s.player.name}</td>
+                <td>${s.pts}</td><td>${s.reb}</td><td>${s.ast}</td>
+                <td>${s.stl}</td><td>${s.blk}</td><td>${s.to}</td>
+            </tr>`;
+            totalPts += s.pts; totalReb += s.reb; totalAst += s.ast;
+            totalStl += s.stl; totalBlk += s.blk; totalTO  += s.to;
         });
 
         table.innerHTML = `
             <thead>
-                <tr><th>Player</th><th>PTS</th><th>REB</th><th>AST</th></tr>
+                <tr><th>Player</th><th>PTS</th><th>REB</th><th>AST</th><th>STL</th><th>BLK</th><th>TO</th></tr>
             </thead>
-            <tbody>
-                ${tableBodyHtml}
-            </tbody>
+            <tbody>${tableBodyHtml}</tbody>
             <tfoot>
                 <tr>
                     <td><strong>Totals</strong></td>
                     <td><strong>${totalPts}</strong></td>
                     <td><strong>${totalReb}</strong></td>
                     <td><strong>${totalAst}</strong></td>
+                    <td><strong>${totalStl}</strong></td>
+                    <td><strong>${totalBlk}</strong></td>
+                    <td><strong>${totalTO}</strong></td>
                 </tr>
             </tfoot>
         `;
@@ -750,7 +736,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function maybeDrawModifierCard() {
-        const chance = 0.99; // 10% chance
+        const chance = 0.99; // 99% chance
         if (Math.random() < chance && bonusModifiers.length > 0) {
             // Draw a random card
             const card = bonusModifiers[Math.floor(Math.random() * bonusModifiers.length)];
